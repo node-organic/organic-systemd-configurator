@@ -1,0 +1,18 @@
+[Unit]
+Description=<%= name %>
+
+[Service]
+ExecStart=. /home/node/.nvm/nvm.sh && nvm use <%= nodeVersion %> && node index.js <%= cellMode %> %i
+# Required on some systems
+WorkingDirectory=<%= cwd %>
+Restart=always
+RestartSec=0
+# Output to syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=<%= name %>
+User=<%= unixUser %>
+Group=<%= unixGroup %>
+
+[Install]
+WantedBy=multi-user.target

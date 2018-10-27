@@ -1,0 +1,47 @@
+{
+  "name": "organic-systemd-configurator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test-coverage": "jest --coverage"
+  },
+  "engines": {
+    "node": "8.12.0"
+  },
+  "author": "Boris Filipov",
+  "license": "MIT",
+  "dependencies": {
+    "angelabilities-package-scripts": "^0.1.0",
+    "ejs": "^2.6.1",
+    "organic-angel": "^0.3.2",
+    "organic-dna-branches": "0.0.2",
+    "organic-dna-loader": "^1.5.1",
+    "organic-stem-cell": "^2.0.3",
+    "semver-diff": "^2.1.0"
+  },
+  "bin": {
+    "organic-systemd-configurator": "./bin/organic-systemd-configurator.js"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.2",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "jest": "^23.6.0",
+    "organic-plasma": "^2.1.0",
+    "organic-plasma-channel": "^2.1.1",
+    "systemd-notify": "^0.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/node-organic/organic-systemd-configurator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/node-organic/organic-systemd-configurator/issues"
+  },
+  "homepage": "https://github.com/node-organic/organic-systemd-configurator#readme"
+}
