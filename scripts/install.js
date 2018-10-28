@@ -56,6 +56,7 @@ module.exports = function (angel) {
         }
       }
       await exec('ssh root@' + angel.cmdData.remote + ' \'systemctl start organic-systemd-configurator.service\'')
+      await exec('ssh root@' + angel.cmdData.remote + ' \'systemctl restart organic-systemd-configurator.service\'')
       console.log('all done.')
       next && next()
     } catch (e) {
