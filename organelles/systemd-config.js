@@ -45,6 +45,13 @@ module.exports = class {
     next()
   }
   async enableCellService (cellInfo) {
+    let sameVersion = false
+    for (let i = 0; i < this.runningCells.length; i++) {
+      if (this.runningCells[i].name === cellInfo.name &&
+      this.runningCells[i].version === cellInfo.version) {
+        sameVersion = true
+      }
+    }
     let serviceFilePath = this.getCellServicePath(cellInfo)
     this.templatePromise.then(async (template) => {
       let serviceContent = ejs.render(template, cellInfo)
@@ -53,7 +60,9 @@ module.exports = class {
       await this.systemctl('enable', cellInfo)
       await this.systemctl('start', cellInfo)
       await this.flushLegacyCells(cellInfo)
-      this.runningCells.push(cellInfo)
+      if (!sameVersion) {
+        this.runningCells.push(cellInfo)
+      }
       await this.updateStore()
     })
   }
@@ -101,7 +110,7 @@ module.exports = class {
     return cellInfo.name + cellInfo.version + '@' + nextNumber
   }
   getCellServicePath (cellInfo) {
-    return path.join(this.dna.configsPath, cellInfo.name + '@.service')
+    return path.join(this.dna.configsPath, cellInfo.name + cellInfo.version + '@.service')
   }
 }
 
