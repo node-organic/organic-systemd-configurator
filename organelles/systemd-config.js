@@ -39,7 +39,7 @@ module.exports = class {
     this.enableCellService(c.cellInfo)
     next()
   }
-  onCellAptosisProposal (c, next) {
+  onCellAptosisComplete (c, next) {
     if (!c.cellInfo) return
     this.disableCellService(c.cellInfo)
     next()
@@ -80,6 +80,7 @@ module.exports = class {
     let serviceFilePath = this.getCellServicePath(cellInfo)
     let serviceStarted = await existsFile(serviceFilePath)
     if (serviceStarted) {
+      console.info('delete', serviceFilePath)
       await this.systemctrl('stop', cellInfo)
       await deleteFile(serviceFilePath)
       for (let i = 0; i < this.runningCells.length; i++) {
