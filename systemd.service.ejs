@@ -2,7 +2,7 @@
 Description=<%= name %>
 
 [Service]
-ExecStart=. /home/node/.nvm/nvm.sh && nvm use <%= nodeVersion %> && node index.js <%= mitosis.mode %> %i
+ExecStart=/bin/bash start.sh <%= nodeVersion %> <%= mitosis.mode %> %i
 # Required on some systems
 WorkingDirectory=<%= cwd %>
 Restart=always
