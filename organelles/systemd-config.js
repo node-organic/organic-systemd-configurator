@@ -81,7 +81,7 @@ module.exports = class {
     let serviceStarted = await existsFile(serviceFilePath)
     if (serviceStarted) {
       console.info('delete', serviceFilePath)
-      await this.systemctrl('stop', cellInfo)
+      await this.systemctl('stop', cellInfo)
       await deleteFile(serviceFilePath)
       for (let i = 0; i < this.runningCells.length; i++) {
         if (this.runningCells[i].name === cellInfo.name &&
