@@ -20,6 +20,12 @@ At your local command line execute
 $ npx node-organic/organic-systemd-configurator <remote-ip>
 ```
 
+or with custom ejs template
+
+```
+$ npx node-organic/organic-systemd-configurator <remote-ip> <path-to-systemd-ejs-template>
+```
+
 ## cell control chemicals
 
 #### onCellMitosisComplete
@@ -33,12 +39,9 @@ $ npx node-organic/organic-systemd-configurator <remote-ip>
     cwd: String,
     version: String,
     nodeVersion: String,
-    port: Number,
-    mountpoint: String,
-    domain: String,
     mitosis: {
       mode: String,
-      aptosis: {
+      apoptosis: {
         versionConditions: [String]
       },
       count: Number
@@ -47,36 +50,15 @@ $ npx node-organic/organic-systemd-configurator <remote-ip>
 }
 ```
 
-#### onCellAptosisComplete
+#### onCellApoptosisComplete
 
 ```
 {
   type: "control",
-  action: "onCellAptosisComplete",
+  action: "onCellApoptosisComplete",
   cellInfo: {
     name: String,
     version: String
   }
 }
 ```
-
-## howto
-
-### set custom organic-systemd-configurator dna
-
-1. create `dna/cells/organic-systemd-configurator.json`
-2. execute `$ npx organic-systemd-configurator install <remote-ip>`
-
-### set custom systemd conf
-
-1. create `dna/cells/organic-systemd-configurator.json` with content:
-
-  ```
-  {
-    "build": {
-      "templatePath": "./current/working/directory/relative/path.ejs"
-    }
-  }
-  ```
-  
-2. execute `$ npx organic-systemd-configurator install <remote-ip>`

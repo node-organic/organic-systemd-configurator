@@ -39,7 +39,7 @@ module.exports = class {
     this.enableCellService(c.cellInfo)
     next()
   }
-  onCellAptosisComplete (c, next) {
+  onCellApoptosisComplete (c, next) {
     if (!c.cellInfo) return
     this.disableCellService(c.cellInfo)
     next()
@@ -70,7 +70,7 @@ module.exports = class {
     for (let i = 0; i < this.runningCells.length; i++) {
       let legacy_cell = this.runningCells[i]
       if (legacy_cell.name === cellInfo.name &&
-        is_version_legacy(legacy_cell.mitosis.aptosis.versionConditions, legacy_cell.version, cellInfo.version)) {
+        is_version_legacy(legacy_cell.mitosis.apoptosis.versionConditions, legacy_cell.version, cellInfo.version)) {
         this.disableCellService(legacy_cell)
         i -= 1
       }
