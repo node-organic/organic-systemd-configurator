@@ -17,7 +17,7 @@ module.exports = function (angel) {
     return exec(tarCmd)
   }
   angel.on('install :remote', (angel, next) => {
-    let templatePath = path.resolve(__dirname, '../nginx.conf.ejs')
+    let templatePath = path.resolve(__dirname, '../systemd.service.ejs')
     angel.do('install ' + angel.cmdData.remote + ' ' + templatePath, next)
   })
   angel.on('install :remote :templatePath', async (angel, next) => {
