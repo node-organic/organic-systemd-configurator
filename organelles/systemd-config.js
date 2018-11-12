@@ -2,23 +2,14 @@ const fs = require('fs')
 const ejs = require('ejs')
 const exec = require('../lib/exec')
 const path = require('path')
-const semverDiff = require('semver-diff')
 
 module.exports = class {
   constructor (plasma, dna) {
     this.plasma = plasma
     this.dna = dna
     this.templatePromise = this.loadTemplate()
-    this.runningCells = []
-    try {
-      this.runningCells = require(path.join(process.cwd(), 'running-cells-store.json'))
-    } catch (e) {}
-    if (dna.channel) {
-      this.plasma.on({
-        type: 'control',
-        channel: dna.channel.name
-      }, this.handleChemical, this)
-    }
+    this.plasma.on('onCellMitosisComplete', this.onCellMitosisComplete, this)
+    this.plasma.on('onCellApoptosisComplete', this.onCellApoptosisComplete, this)
   }
   async loadTemplate () {
     let promise = new Promise((resolve, reject) => {
@@ -30,75 +21,33 @@ module.exports = class {
     })
     return promise
   }
-  handleChemical (c, next) {
-    if (!this[c.action]) return next(new Error(c.action + ' action not found'))
-    this[c.action](c, next)
-  }
   onCellMitosisComplete (c, next) {
-    if (!c.cellInfo) return
-    this.enableCellService(c.cellInfo)
-    next()
-  }
-  onCellApoptosisComplete (c, next) {
-    if (!c.cellInfo) return
-    this.disableCellService(c.cellInfo)
-    next()
-  }
-  async enableCellService (cellInfo) {
-    let sameVersion = false
-    for (let i = 0; i < this.runningCells.length; i++) {
-      if (this.runningCells[i].name === cellInfo.name &&
-      this.runningCells[i].version === cellInfo.version) {
-        sameVersion = true
-      }
-    }
+    let cellInfo = c.cellInfo
     let serviceFilePath = this.getCellServicePath(cellInfo)
     this.templatePromise.then(async (template) => {
+      let serviceStarted = await existsFile(serviceFilePath)
       let serviceContent = ejs.render(template, cellInfo)
       await writeFile(serviceFilePath, serviceContent)
       console.info('wrote', serviceFilePath)
-      await this.systemctl('enable', cellInfo)
-      await this.systemctl('start', cellInfo)
-      await this.flushLegacyCells(cellInfo)
-      if (!sameVersion) {
-        this.runningCells.push(cellInfo)
+      if (!serviceStarted) {
+        await this.systemctl('enable', cellInfo)
+        await this.systemctl('start', cellInfo)
+      } else {
+        await this.systemctl('restart', cellInfo)
       }
-      await this.updateStore()
     })
+    next()
   }
-  flushLegacyCells (cellInfo) {
-    for (let i = 0; i < this.runningCells.length; i++) {
-      let legacy_cell = this.runningCells[i]
-      if (legacy_cell.name === cellInfo.name &&
-        is_version_legacy(legacy_cell.mitosis.apoptosis.versionConditions, legacy_cell.version, cellInfo.version)) {
-        this.disableCellService(legacy_cell)
-        i -= 1
-      }
-    }
-  }
-  async disableCellService (cellInfo) {
+  async onCellApoptosisComplete (c, next) {
+    let cellInfo = c.cellInfo
     let serviceFilePath = this.getCellServicePath(cellInfo)
     let serviceStarted = await existsFile(serviceFilePath)
     if (serviceStarted) {
       console.info('delete', serviceFilePath)
       await this.systemctl('stop', cellInfo)
       await deleteFile(serviceFilePath)
-      for (let i = 0; i < this.runningCells.length; i++) {
-        if (this.runningCells[i].name === cellInfo.name &&
-          this.runningCells[i].version === cellInfo.version) {
-          this.runningCells.splice(i, 1)
-          i -= 1
-        }
-      }
-      await this.updateStore()
     }
-  }
-  async updateStore () {
-    return writeFile(path.join(process.cwd(), 'running-cells-store.json'),
-      JSON.stringify(this.runningCells))
-  }
-  async listCells () {
-    return this.runningCells
+    next()
   }
   async systemctl (command, cellInfo) {
     let promises = []
@@ -142,9 +91,4 @@ const deleteFile = function (filepath) {
       resolve(true)
     })
   })
-}
-
-const is_version_legacy = function (versionConditions, existing_version, new_version) {
-  let diffValue = semverDiff(existing_version, new_version)
-  return versionConditions.indexOf(diffValue) !== -1
 }

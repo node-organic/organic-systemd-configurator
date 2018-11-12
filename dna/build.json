@@ -1,25 +1,17 @@
 {
   "systemd-config": {
     "source": "./organelles/systemd-config",
-    "channel": {
-      "name": "@channel-name",
-      "onReadyType": "channelReady",
-      "emitReannonceType": "reannonce-@{channel-name}"
-    },
     "templatePath": "./systemd.service.ejs",
-    "reannonceTimeout": 5000,
     "configsPath": "/etc/systemd/system"
   },
-  "organic-plasma-channel": {
-    "source": "organic-plasma-channel",
-    "channelName": "@channel-name",
-    "swarmOpts": {
-      "utp": false,
-      "tcp": true,
-      "dns": true,
-      "dht": false
-    },
-    "emitReady": "channelReady",
-    "readyOnListening": true
+  "organic-watch-json-dir": {
+    "source": "organic-watch-json-dir",
+    "location": "/home/node/deployments",
+    "emit": {
+      "dataPropertyName": "cellInfo",
+      "onChangeFile": "onCellMitosisComplete",
+      "onNewFile": "onCellMitosisComplete",
+      "onDeleteFile": "onCellApoptosisComplete"
+    }
   }
 }
