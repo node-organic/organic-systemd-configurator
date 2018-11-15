@@ -23,6 +23,7 @@ module.exports = class {
   }
   onCellMitosisComplete (c, next) {
     let cellInfo = c.cellInfo
+    if (cellInfo.mitosis.zygote) return
     let serviceFilePath = this.getCellServicePath(cellInfo)
     this.templatePromise.then(async (template) => {
       let serviceStarted = await existsFile(serviceFilePath)
@@ -40,6 +41,7 @@ module.exports = class {
   }
   async onCellApoptosisComplete (c, next) {
     let cellInfo = c.cellInfo
+    if (cellInfo.mitosis.zygote) return
     let serviceFilePath = this.getCellServicePath(cellInfo)
     let serviceStarted = await existsFile(serviceFilePath)
     if (serviceStarted) {
