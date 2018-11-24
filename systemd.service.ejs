@@ -7,10 +7,6 @@ ExecStart=/bin/bash start.sh <%= nodeVersion %> <%= mitosis.mode %> %i
 WorkingDirectory=<%= cwd %>
 Restart=always
 RestartSec=0
-# Output to syslog
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=<%= name %>
 User=node
 Group=node
 
