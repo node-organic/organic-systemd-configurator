@@ -3,6 +3,8 @@ Description=<%= name %>
 
 [Service]
 ExecStart=/bin/bash start.sh <%= nodeVersion %> <%= mitosis.mode %> %i
+# make sure that the service is not leaking a deploymentRunningJSON
+ExecStopPost=/bin/bash -c 'rm /home/node/deployments/running/<%= name %>-<%= version %>-<%= mitosis.mode %>.json'
 # Required on some systems
 WorkingDirectory=<%= cwd %>
 Restart=always
